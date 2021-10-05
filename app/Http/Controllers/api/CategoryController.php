@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
+use App\Services\CategoryService;
+use Validator;
 
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +23,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return $this->sendResponse($this->categoryService->getAll(), 'Article fetched.');
     }
 
     /**
@@ -25,7 +34,19 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->input();
+
+        $validator = Validator::make($input, [
+            'category' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors());
+        }
+
+        $response = $this->categoryService->create($input);
+
+        return $this->sendResponse($response, 'Category created.');
     }
 
     /**
@@ -36,7 +57,13 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $response = $this->categoryService->getOne($id);
+
+        if (is_null($response)) {
+            return $this->sendError('Category does not exist.');
+        }
+
+        return $this->sendResponse($response, 'Category fetched.');
     }
 
     /**
@@ -59,6 +86,18 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category = $this->categoryService->getOne($id);
+
+        if (is_null($category)) {
+            return $this->sendError('Category does not exist.');
+        }
+
+        $response = $this->categoryService->delete($id);
+
+        if (is_null($response)) {
+            return $this->sendResponse($response, 'Category deleted.');
+        } else {
+            return $this->sendError('Delete Category failed.');
+        }
     }
 }

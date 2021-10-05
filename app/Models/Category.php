@@ -13,6 +13,16 @@ class Category extends Model
     protected $fillable = [
         'category'
     ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'category' => 'uncategorized',
+    ];
+
     use HasFactory;
 
     public function articles()

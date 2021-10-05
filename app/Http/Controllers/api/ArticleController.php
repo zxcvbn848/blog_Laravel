@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
 use App\Services\ArticleService;
+use Validator;
+use Illuminate\Support\Facades\Auth;
 
-class ArticleController extends Controller
+class ArticleController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     protected $articleService;
 
     public function __construct(ArticleService $articleService)
@@ -21,9 +17,15 @@ class ArticleController extends Controller
         $this->articleService = $articleService;
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
     public function index()
     {
-        return response()->json($this->articleService->getBlog(), 200);
+        return $this->sendResponse($this->articleService->getAll(), 'Article fetched.');
     }
 
     /**
@@ -34,7 +36,22 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->input();
+
+        $validator = Validator::make($input, [
+            'title' => 'required',
+            'article' => 'required',
+            'category' => 'required',
+            'tags' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors());
+        }
+
+        $response = $this->articleService->create($input);
+
+        return $this->sendResponse($response, 'Article created.');
     }
 
     /**
@@ -45,7 +62,13 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
-        return response()->json($this->articleService->getArticle($id), 200);
+        $response = $this->articleService->getFullOne($id);
+
+        if (is_null($response)) {
+            return $this->sendError('Article does not exist.');
+        }
+
+        return $this->sendResponse($response, 'Article fetched.');
     }
 
     /**
@@ -57,7 +80,21 @@ class ArticleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->input();
+
+        $article = $this->articleService->getFullOne($id);
+
+        if (is_null($article)) {
+            return $this->sendError('Article does not exist.');
+        }
+
+        if ($article['author_id'] != Auth::user()->id) {
+            return $this->sendError('You are not the author of the article.');
+        }
+
+        $response = $this->articleService->update($id, $input);
+
+        return $this->sendResponse($response, 'Article updated.');
     }
 
     /**
@@ -68,6 +105,22 @@ class ArticleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $article = $this->articleService->getFullOne($id);
+
+        if (is_null($article)) {
+            return $this->sendError('Article does not exist.');
+        }
+
+        if ($article['author_id'] != Auth::user()->id) {
+            return $this->sendError('You are not the author of the article.');
+        }
+
+        $response = $this->articleService->delete($id);
+
+        if (is_null($response)) {
+            return $this->sendResponse($response, 'Article deleted.');
+        } else {
+            return $this->sendError('Delete Article failed.');
+        }
     }
 }

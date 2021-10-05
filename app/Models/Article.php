@@ -11,7 +11,7 @@ class Article extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
     protected $fillable = [
-        'article', 'author_id'
+        'article', 'author_id', 'title', 'category_id'
     ];
     use HasFactory;
 

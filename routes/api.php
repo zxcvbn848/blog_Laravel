@@ -3,8 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\api\UserController;
-use App\Http\Controllers\api\ArticleController;
+use App\Http\Controllers\API\ArticleController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,20 +22,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::get('/user', [UserController::class, 'index']);
-// Route::get('/user/{id}', [UserController::class, 'show']);
-// Route::post('/user', [UserController::class, 'store']);
-// Route::put('/user/{id}', [UserController::class, 'update']);
-// Route::delete('/user/{id}', [UserController::class, 'destroy']);
+Route::post('login', [AuthController::class, 'signin']);
+Route::post('register', [AuthController::class, 'signup']);
 
 Route::get('/articles', [ArticleController::class, 'index']);
 Route::get('/article/{id}', [ArticleController::class, 'show']);
-Route::post('/article', [ArticleController::class, 'store']);
-Route::put('/article/{id}', [ArticleController::class, 'update']);
-Route::delete('/article/{id}', [ArticleController::class, 'destroy']);
 
-Route::get('/categories', [ArticleController::class, 'index']);
-Route::get('/category/{id}', [ArticleController::class, 'show']);
-Route::post('/category', [ArticleController::class, 'store']);
-Route::put('/category/{id}', [ArticleController::class, 'update']);
-Route::delete('/category/{id}', [ArticleController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/article', [ArticleController::class, 'store']);
+    Route::patch('/article/{id}', [ArticleController::class, 'update']);
+    Route::delete('/article/{id}', [ArticleController::class, 'destroy']);
+});
+
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/category/{id}', [CategoryController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/category', [CategoryController::class, 'store']);
+    Route::delete('/category/{id}', [CategoryController::class, 'destroy']);
+});
