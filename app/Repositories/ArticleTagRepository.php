@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\ArticleTag;
-use Illuminate\Database\QueryException;
 
 class ArticleTagRepository
 {
@@ -28,57 +27,47 @@ class ArticleTagRepository
     {
         if (!$article || !$tags) return;
 
-        try {
-            $articleTags = [];
+        $articleTags = [];
 
-            foreach ($tags as $tag) {
-                $articleTag = ArticleTag::create([
-                    'tag_id' => $tag['id'],
-                    'article_id' => $article['id'],
-                ]);
-                array_push($articleTags, $articleTag);
-            }
-
-            return $articleTags;
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
+        foreach ($tags as $tag) {
+            $articleTag = ArticleTag::create([
+                'tag_id' => $tag['id'],
+                'article_id' => $article['id'],
+            ]);
+            array_push($articleTags, $articleTag);
         }
+
+        return $articleTags;
     }
 
     public function patch($article, $tags)
     {
         if (!$article || !$tags) return;
 
-        try {
-            $articleTags = [];
-            $idOfTags = [];
+        $articleTags = [];
+        $idOfTags = [];
 
-            foreach ($tags as $tag) {
-                $selectedTag = $this->searchTag($article, $tag);
+        foreach ($tags as $tag) {
+            $selectedTag = $this->searchTag($article, $tag);
 
-                if (!$selectedTag) {
-                    $selectedTag = ArticleTag::create([
-                        'tag_id' => $tag['id'],
-                        'article_id' => $article['id'],
-                    ]);
-                }
-
-                array_push($articleTags, $selectedTag);
-                array_push($idOfTags, $selectedTag['tag_id']);
+            if (!$selectedTag) {
+                $selectedTag = ArticleTag::create([
+                    'tag_id' => $tag['id'],
+                    'article_id' => $article['id'],
+                ]);
             }
 
-            $notIncludedArticleTags = ArticleTag::where('article_id', $article['id'])->whereNotIn('tag_id', $idOfTags)->get();
-
-            foreach ($notIncludedArticleTags as $articleTag) {
-                $articleTag->delete();
-            }
-
-            return $articleTags;
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
+            array_push($articleTags, $selectedTag);
+            array_push($idOfTags, $selectedTag['tag_id']);
         }
+
+        $notIncludedArticleTags = ArticleTag::where('article_id', $article['id'])->whereNotIn('tag_id', $idOfTags)->get();
+
+        foreach ($notIncludedArticleTags as $articleTag) {
+            $articleTag->delete();
+        }
+
+        return $articleTags;
     }
 
     public function delete($id)

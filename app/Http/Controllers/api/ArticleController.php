@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\API\BaseController;
+use App\Http\Controllers\API\APIController;
 use Illuminate\Http\Request;
 use App\Services\ArticleService;
 use Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 
-class ArticleController extends BaseController
+class ArticleController extends APIController
 {
     protected $articleService;
 
@@ -25,7 +26,12 @@ class ArticleController extends BaseController
 
     public function index()
     {
-        return $this->sendResponse($this->articleService->getAll(), 'Article fetched.');
+        try {
+            return $this->sendResponse($this->articleService->getAll(), 'Article fetched.');
+        } catch (QueryException $e) {
+            echo $e;
+            return $this->sendError('Server Internal Error.', 500);
+        }
     }
 
     /**
@@ -36,22 +42,27 @@ class ArticleController extends BaseController
      */
     public function store(Request $request)
     {
-        $input = $request->input();
+        try {
+            $input = $request->input();
 
-        $validator = Validator::make($input, [
-            'title' => 'required',
-            'article' => 'required',
-            'category' => 'required',
-            'tags' => 'required',
-        ]);
+            $validator = Validator::make($input, [
+                'title' => 'required',
+                'article' => 'required',
+                'category' => 'required',
+                'tags' => 'required',
+            ]);
 
-        if ($validator->fails()) {
-            return $this->sendError($validator->errors());
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors(), 400);
+            }
+
+            $response = $this->articleService->create($input);
+
+            return $this->sendResponse($response, 'Article created.', 201);
+        } catch (QueryException $e) {
+            echo $e;
+            return $this->sendError('Server Internal Error.', 500);
         }
-
-        $response = $this->articleService->create($input);
-
-        return $this->sendResponse($response, 'Article created.');
     }
 
     /**
@@ -62,13 +73,18 @@ class ArticleController extends BaseController
      */
     public function show($id)
     {
-        $response = $this->articleService->getFullOne($id);
+        try {
+            $response = $this->articleService->getFullOne($id);
 
-        if (is_null($response)) {
-            return $this->sendError('Article does not exist.');
+            if (is_null($response)) {
+                return $this->sendError('Article does not exist.');
+            }
+
+            return $this->sendResponse($response, 'Article fetched.');
+        } catch (QueryException $e) {
+            echo $e;
+            return $this->sendError('Server Internal Error.', 500);
         }
-
-        return $this->sendResponse($response, 'Article fetched.');
     }
 
     /**
@@ -80,21 +96,26 @@ class ArticleController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        $input = $request->input();
+        try {
+            $input = $request->input();
 
-        $article = $this->articleService->getFullOne($id);
+            $article = $this->articleService->getFullOne($id);
 
-        if (is_null($article)) {
-            return $this->sendError('Article does not exist.');
+            if (is_null($article)) {
+                return $this->sendError('Article does not exist.');
+            }
+
+            if ($article['author_id'] != Auth::user()->id) {
+                return $this->sendError('You are not the author of the article.', 401);
+            }
+
+            $response = $this->articleService->update($id, $input);
+
+            return $this->sendResponse($response, 'Article updated.', 200);
+        } catch (QueryException $e) {
+            echo $e;
+            return $this->sendError('Server Internal Error.', 500);
         }
-
-        if ($article['author_id'] != Auth::user()->id) {
-            return $this->sendError('You are not the author of the article.');
-        }
-
-        $response = $this->articleService->update($id, $input);
-
-        return $this->sendResponse($response, 'Article updated.');
     }
 
     /**
@@ -105,22 +126,27 @@ class ArticleController extends BaseController
      */
     public function destroy($id)
     {
-        $article = $this->articleService->getFullOne($id);
+        try {
+            $article = $this->articleService->getFullOne($id);
 
-        if (is_null($article)) {
-            return $this->sendError('Article does not exist.');
-        }
+            if (is_null($article)) {
+                return $this->sendError('Article does not exist.');
+            }
 
-        if ($article['author_id'] != Auth::user()->id) {
-            return $this->sendError('You are not the author of the article.');
-        }
+            if ($article['author_id'] != Auth::user()->id) {
+                return $this->sendError('You are not the author of the article.');
+            }
 
-        $response = $this->articleService->delete($id);
+            $response = $this->articleService->delete($id);
 
-        if (is_null($response)) {
-            return $this->sendResponse($response, 'Article deleted.');
-        } else {
-            return $this->sendError('Delete Article failed.');
+            if (is_null($response)) {
+                return $this->sendResponse($response, 'Article deleted.', 204);
+            } else {
+                return $this->sendError('Delete Article failed.');
+            }
+        } catch (QueryException $e) {
+            echo $e;
+            return $this->sendError('Server Internal Error.', 500);
         }
     }
 }

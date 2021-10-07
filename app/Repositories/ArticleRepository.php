@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Article;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleRepository
@@ -54,19 +53,14 @@ class ArticleRepository
     {
         if (!$input['title'] || !$input['article'] || !$category) return;
 
-        try {
-            $article = Article::create([
-                'title' => $input['title'],
-                'author_id' => Auth::user()->id,
-                'category_id' => $category['id'],
-                'article' => $input['article'],
-            ]);
+        $article = Article::create([
+            'title' => $input['title'],
+            'author_id' => Auth::user()->id,
+            'category_id' => $category['id'],
+            'article' => $input['article'],
+        ]);
 
-            return $article;
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
-        }
+        return $article;
     }
 
     public function patch($article, $input, $category)
@@ -78,36 +72,27 @@ class ArticleRepository
             return $article;
         }
 
-        try {
-            if ($category) {
-                $article->category_id = $category['id'];
-                $article->save();
-            }
 
-            if (array_key_exists('title', $input) && $input['title']) {
-                $article->title = $input['title'];
-                $article->save();
-            }
-
-            if (array_key_exists('article', $input) && $input['article']) {
-                $article->article = $input['article'];
-                $article->save();
-            }
-
-            return $article;
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
+        if ($category) {
+            $article->category_id = $category['id'];
+            $article->save();
         }
+
+        if (array_key_exists('title', $input) && $input['title']) {
+            $article->title = $input['title'];
+            $article->save();
+        }
+
+        if (array_key_exists('article', $input) && $input['article']) {
+            $article->article = $input['article'];
+            $article->save();
+        }
+
+        return $article;
     }
 
     public function delete($id)
     {
-        try {
-            Article::find($id)->delete();
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
-        }
+        Article::find($id)->delete();
     }
 }

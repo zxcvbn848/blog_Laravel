@@ -1,0 +1,379 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Blog",
+        "description": "Blog RESTful API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost",
+            "description": "Localhost"
+        }
+    ],
+    "paths": {
+        "/api/articles": {
+            "get": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Get list of articles",
+                "description": "Get list of articles",
+                "responses": {
+                    "200": {
+                        "description": "Articles fetched."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                }
+            }
+        },
+        "/api/article/{id}": {
+            "get": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Get an article",
+                "description": "Get an article",
+                "operationId": "articleShow",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Article id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article fetched."
+                    },
+                    "404": {
+                        "description": "Article does not exist."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Delete Article",
+                "description": "Delete Article",
+                "operationId": "articleDeStroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Article id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article deleted."
+                    },
+                    "401": {
+                        "description": "You are not the author of the article."
+                    },
+                    "404": {
+                        "description": "Article does not exist."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Update Article",
+                "description": "Update Article",
+                "operationId": "articleUpdate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Article id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "title of article",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "article",
+                        "in": "query",
+                        "description": "content of article",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "category of article",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "description": "tags of article",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article updated."
+                    },
+                    "401": {
+                        "description": "You are not the author of the article."
+                    },
+                    "404": {
+                        "description": "Article does not exist."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/api/article": {
+            "post": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Create Article",
+                "description": "Create Article",
+                "operationId": "articleStore",
+                "parameters": [
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "title of article",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "article",
+                        "in": "query",
+                        "description": "content of article",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "category of article",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "description": "tags of article",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Article created."
+                    },
+                    "400": {
+                        "description": "A kind of {request errors from Validator}."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get list of categories",
+                "description": "Get list of categories",
+                "responses": {
+                    "200": {
+                        "description": "Categories fetched."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                }
+            }
+        },
+        "/api/category/{id}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get an category",
+                "description": "Get an category",
+                "operationId": "categoryShow",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Category id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category fetched."
+                    },
+                    "404": {
+                        "description": "Category does not exist."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Delete Category",
+                "description": "Delete Category",
+                "operationId": "categoryDeStroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Category id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category deleted."
+                    },
+                    "400": {
+                        "description": "Delete Category failed."
+                    },
+                    "404": {
+                        "description": "Category does not exist."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/api/category": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Create Category",
+                "description": "Create Category",
+                "operationId": "categoryStore",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "content of category",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Category created."
+                    },
+                    "400": {
+                        "description": "A kind of {request errors from Validator}."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "Authorization": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\CategoryRepository;
-use Illuminate\Database\QueryException;
 
 class CategoryService
 {
@@ -31,25 +30,15 @@ class CategoryService
 
     public function create($input)
     {
-        try {
-            $category = $this->categoryRepo->post($input);
+        $category = $this->categoryRepo->post($input);
 
-            return $this->categoryRepo->post($input);
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            return 'Server Internal error';
-        }
+        return $this->categoryRepo->post($input);
     }
 
     public function delete($id)
     {
-        try {
-            $this->categoryRepo->delete($id);
+        $this->categoryRepo->delete($id);
 
-            return $this->categoryRepo->getOne($id);
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            return 'Server Internal error';
-        }
+        return $this->categoryRepo->getOne($id);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Tag;
-use Illuminate\Database\QueryException;
 
 class TagRepository
 {
@@ -24,27 +23,22 @@ class TagRepository
         if (!array_key_exists('tags', $input)) return;
         if (!$input['tags']) return;
 
-        try {
-            $tags = [];
+        $tags = [];
 
-            foreach ($input['tags'] as $tag) {
-                $selectedTag = $this->search($tag);
+        foreach ($input['tags'] as $tag) {
+            $selectedTag = $this->search($tag);
 
-                if ($selectedTag) {
-                    $addedTag = $selectedTag;
-                } else {
-                    $addedTag = Tag::create([
-                        'tag' => $tag,
-                    ]);
-                }
-
-                array_push($tags, $addedTag);
+            if ($selectedTag) {
+                $addedTag = $selectedTag;
+            } else {
+                $addedTag = Tag::create([
+                    'tag' => $tag,
+                ]);
             }
 
-            return $tags;
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
+            array_push($tags, $addedTag);
         }
+
+        return $tags;
     }
 }

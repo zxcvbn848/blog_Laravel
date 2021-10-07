@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Category;
-use Illuminate\Database\QueryException;
 
 class CategoryRepository
 {
@@ -35,20 +34,15 @@ class CategoryRepository
 
         $selectedCategory = $this->search($input);
 
-        try {
-            if ($selectedCategory) {
-                $category = $selectedCategory;
-            } else {
-                $category = Category::create([
-                    'category' => $input['category'],
-                ]);
-            }
-
-            return $category;
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
+        if ($selectedCategory) {
+            $category = $selectedCategory;
+        } else {
+            $category = Category::create([
+                'category' => $input['category'],
+            ]);
         }
+
+        return $category;
     }
 
     public function patch($input, $article)
@@ -62,29 +56,19 @@ class CategoryRepository
 
         $selectedCategory = $this->search($input);
 
-        try {
-            if ($selectedCategory) {
-                $category = $selectedCategory;
-            } else {
-                $category = Category::create([
-                    'category' => $input['category'],
-                ]);
-            }
-
-            return $category;
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
+        if ($selectedCategory) {
+            $category = $selectedCategory;
+        } else {
+            $category = Category::create([
+                'category' => $input['category'],
+            ]);
         }
+
+        return $category;
     }
 
     public function delete($id)
     {
-        try {
-            Category::find($id)->delete();
-        } catch (QueryException $e) {
-            echo $e->getMessage();
-            throw $e;
-        }
+        Category::find($id)->delete();
     }
 }
