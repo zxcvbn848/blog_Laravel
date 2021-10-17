@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
-    protected $table = 'article';
+    protected $table = 'articles';
     protected $primaryKey = 'id';
-    public $timestamps = false;
+    // public $timestamps = false;
     protected $fillable = [
         'article', 'author_id', 'title', 'category_id'
     ];
@@ -27,6 +27,6 @@ class Article extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class)->using(ArticleTag::class)->as('article_tag');
+        return $this->belongsToMany(Tag::class, 'articles_tags', 'article_id', 'tag_id')->using(ArticleTag::class)->as('articles_tags');
     }
 }

@@ -12,13 +12,14 @@
         }
     ],
     "paths": {
-        "/api/articles": {
+        "/api/article": {
             "get": {
                 "tags": [
                     "Article"
                 ],
                 "summary": "Get list of articles",
                 "description": "Get list of articles",
+                "operationId": "4e43317621ec8744f4b5d507ba91e1a0",
                 "responses": {
                     "200": {
                         "description": "Articles fetched."
@@ -27,6 +28,71 @@
                         "description": "Server Internal Error."
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Create Article",
+                "description": "Create Article",
+                "operationId": "articleStore",
+                "parameters": [
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "title of article",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "article",
+                        "in": "query",
+                        "description": "content of article",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "category of article",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "description": "tags of article",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Article created."
+                    },
+                    "400": {
+                        "description": "A kind of {request errors from Validator}."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             }
         },
         "/api/article/{id}": {
@@ -172,58 +238,44 @@
                 ]
             }
         },
-        "/api/article": {
+        "/api/category": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get list of categories",
+                "description": "Get list of categories",
+                "operationId": "dd014bab5815c3ddc3a4396b74e183eb",
+                "responses": {
+                    "200": {
+                        "description": "Categories fetched."
+                    },
+                    "500": {
+                        "description": "Server Internal Error."
+                    }
+                }
+            },
             "post": {
                 "tags": [
-                    "Article"
+                    "Category"
                 ],
-                "summary": "Create Article",
-                "description": "Create Article",
-                "operationId": "articleStore",
+                "summary": "Create Category",
+                "description": "Create Category",
+                "operationId": "categoryStore",
                 "parameters": [
-                    {
-                        "name": "title",
-                        "in": "query",
-                        "description": "title of article",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "article",
-                        "in": "query",
-                        "description": "content of article",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     {
                         "name": "category",
                         "in": "query",
-                        "description": "category of article",
+                        "description": "content of category",
                         "required": true,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "tags",
-                        "in": "query",
-                        "description": "tags of article",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Article created."
+                        "description": "Category created."
                     },
                     "400": {
                         "description": "A kind of {request errors from Validator}."
@@ -237,23 +289,6 @@
                         "Authorization": []
                     }
                 ]
-            }
-        },
-        "/api/categories": {
-            "get": {
-                "tags": [
-                    "Category"
-                ],
-                "summary": "Get list of categories",
-                "description": "Get list of categories",
-                "responses": {
-                    "200": {
-                        "description": "Categories fetched."
-                    },
-                    "500": {
-                        "description": "Server Internal Error."
-                    }
-                }
             }
         },
         "/api/category/{id}": {
@@ -314,43 +349,6 @@
                     },
                     "404": {
                         "description": "Category does not exist."
-                    },
-                    "500": {
-                        "description": "Server Internal Error."
-                    }
-                },
-                "security": [
-                    {
-                        "Authorization": []
-                    }
-                ]
-            }
-        },
-        "/api/category": {
-            "post": {
-                "tags": [
-                    "Category"
-                ],
-                "summary": "Create Category",
-                "description": "Create Category",
-                "operationId": "categoryStore",
-                "parameters": [
-                    {
-                        "name": "category",
-                        "in": "query",
-                        "description": "content of category",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Category created."
-                    },
-                    "400": {
-                        "description": "A kind of {request errors from Validator}."
                     },
                     "500": {
                         "description": "Server Internal Error."

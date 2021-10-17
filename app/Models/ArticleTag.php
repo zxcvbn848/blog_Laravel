@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ArticleTag extends Pivot
 {
-    protected $table = 'article_tag';
-    public $incrementing = true;
+    protected $table = 'articles_tags';
     protected $primaryKey = 'id';
-    public $timestamps = false;
+    public $incrementing = true;
+    // public $timestamps = false;
     protected $fillable = [
         'tag_id', 'article_id'
     ];
@@ -18,11 +18,11 @@ class ArticleTag extends Pivot
 
     public function tag()
     {
-        return $this->belongsTo(Tag::class);
+        return $this->belongsTo(Tags::class);
     }
 
     public function article()
     {
-        return $this->belongsTo(Article::class);
+        return $this->belongsTo(Articles::class);
     }
 }

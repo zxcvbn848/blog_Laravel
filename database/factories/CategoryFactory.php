@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\UserInfo;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UserInfoFactory extends Factory
+class CategoryFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = UserInfo::class;
+    protected $model = Category::class;
 
     /**
      * Define the model's default state.
@@ -21,11 +21,12 @@ class UserInfoFactory extends Factory
      */
     public function definition()
     {
+        $datetime = $this->faker->dateTimeBetween('-1 day');
+
         return [
-            'username' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'password' => $this->faker->password(),
-            'account' => $this->faker->userName(),
+            'category' => $this->faker->unique()->word(),
+            'created_at' => $datetime,
+            'updated_at' => $datetime,
         ];
     }
 }

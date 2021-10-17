@@ -65,13 +65,9 @@ class ArticleRepository
 
     public function patch($article, $input, $category)
     {
-        if (!array_key_exists('title', $input) && !array_key_exists('article', $input)) {
+        if (!array_key_exists('title', $input) && !array_key_exists('article', $input) && !array_key_exists('category', $input)) {
             return $article;
         }
-        if (!$input['title'] && !$input['article']) {
-            return $article;
-        }
-
 
         if ($category) {
             $article->category_id = $category['id'];

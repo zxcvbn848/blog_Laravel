@@ -22,10 +22,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('login', [AuthController::class, 'signin']);
-Route::post('register', [AuthController::class, 'signup']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/article', [ArticleController::class, 'index']);
 Route::get('/article/{id}', [ArticleController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/article/{id}', [ArticleController::class, 'destroy']);
 });
 
-Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/category', [CategoryController::class, 'index']);
 Route::get('/category/{id}', [CategoryController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {

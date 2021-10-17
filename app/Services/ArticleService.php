@@ -10,6 +10,9 @@ use App\Repositories\TagRepository;
 class ArticleService
 {
     protected $articleRepo;
+    protected $articleTagRepo;
+    protected $categoryRepo;
+    protected $tagRepo;
 
     public function __construct(ArticleRepository $articleRepo, ArticleTagRepository $articleTagRepo, CategoryRepository $categoryRepo, TagRepository $tagRepo)
     {

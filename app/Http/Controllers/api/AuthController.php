@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\API\BaseController;
+use App\Http\Controllers\API\APIController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Validator;
 use App\Models\User;
+use App\Http\Requests\Auth\RegisterFormRequest;
 
-class AuthController extends BaseController
+class AuthController extends APIController
 {
-    public function signin(Request $request)
+    public function login(Request $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $authUser = Auth::user();
-            $success['token'] = $authUser->createToken('MyAuthApp')->plainTextToken;
             $success['name'] = $authUser->name;
 
             return $this->sendResponse($success, 'User signed in');
@@ -24,19 +23,8 @@ class AuthController extends BaseController
         }
     }
 
-    public function signup(Request $request)
+    public function register(RegisterFormRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'confirm_password' => 'required|same:password',
-        ]);
-
-        if($validator->fails()){
-            return $this->sendError('Error validation', $validator->errors());
-        }
-
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);

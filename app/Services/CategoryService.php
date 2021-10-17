@@ -15,23 +15,17 @@ class CategoryService
 
     public function getAll()
     {
-        return [
-            $this->categoryRepo->getAll(),
-            ];
+        return $this->categoryRepo->getAll();
     }
 
     public function getOne($id)
     {
-        return [
-            $this->categoryRepo->getOne($id),
-            ];
+        return $this->categoryRepo->getOne($id);
 
     }
 
     public function create($input)
     {
-        $category = $this->categoryRepo->post($input);
-
         return $this->categoryRepo->post($input);
     }
 
